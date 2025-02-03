@@ -13,7 +13,7 @@
         public static void Title(string title)
         {
             Console.Clear();
-            Console.WriteLine("\x1b[3J"); // microshit shenanigans
+            Console.WriteLine("\x1b[3J");
 
             WriteDash(title.Length);
             Console.WriteLine("\n  " + title);
@@ -24,7 +24,7 @@
         static void Main(string[] args)
         {
             Title("Connect four");
-            Console.WriteLine("\nhorribly written by: Maxim Korotkov\n");
+            Console.WriteLine("\nproudly enshittified by: Maxim K\n");
             WriteDash(30);
         }
     }
