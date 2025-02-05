@@ -176,7 +176,30 @@ namespace poopoofard
             while (!IsWinner())
             {
                 Round();
-            }               
+            }
+            int x = Console.WindowWidth;
+            int y = Console.WindowHeight;
+            
+            for (int i = 0; i < 100; i++)
+            {
+
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Clear();
+                Console.Write("\x1b[3J");
+                Console.SetCursorPosition(x / 2 - 20, y / 2);
+                Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
+                Thread.Sleep(20);
+
+                Console.BackgroundColor= ConsoleColor.Black;
+                Console.ForegroundColor= ConsoleColor.White;
+                Console.Clear();
+                Console.Write("\x1b[3J");
+                Console.SetCursorPosition(x / 2 - 20, y / 2);
+                Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
+                Thread.Sleep(20);
+            }
+
         }
     }
 }
