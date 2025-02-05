@@ -55,20 +55,26 @@ namespace poopoofard
                 {
                     if(board[j][i] == RED)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write("X");
+                        Console.ForegroundColor = ConsoleColor.White;
                     } 
                     else if(board[j][i] == YELLOW)
                     {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write("O");
+                        Console.ForegroundColor = ConsoleColor.White;
                     }
                     else
                     {
                         Console.Write("_");
-                    }    
+                    }
+                    
                     Console.Write("|");
                 }
                 Console.Write("\n");
             }
+            WriteDash(10);
         }
         static void ShowHeader()
         {
@@ -86,11 +92,24 @@ namespace poopoofard
             }
             return result;
         }
+        static void DrawCursor()
+        {
+            if (P1turn)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
+            Console.WriteLine(StrMul(" ", cursor * 2) + (P1turn ? "X" : "O") + "            ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(StrMul(" ", cursor * 2) + "V              ");
+        }
         static void Refresh()
         {
             ShowHeader();
-            Console.WriteLine(StrMul(" ", cursor * 2) + (P1turn ? "X" : "O") + "            ");
-            Console.WriteLine(StrMul(" ", cursor * 2) + "V              ");
+            DrawCursor();
             ShowGrid();
         }
         static void Round()
@@ -108,8 +127,7 @@ namespace poopoofard
                         cursor = Math.Clamp(cursor + 1, 0, 6);
                         break;
                 }
-                Console.WriteLine(StrMul(" ", cursor * 2) + (P1turn ? "X" : "O") + "            ");
-                Console.WriteLine(StrMul(" ", cursor * 2) + "V              ");
+                DrawCursor();
                 ShowGrid();
 
                 input = Console.ReadKey().Key;
@@ -180,7 +198,7 @@ namespace poopoofard
             int x = Console.WindowWidth;
             int y = Console.WindowHeight;
             
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 14; i++)
             {
 
                 Console.BackgroundColor = ConsoleColor.White;
@@ -189,15 +207,15 @@ namespace poopoofard
                 Console.Write("\x1b[3J");
                 Console.SetCursorPosition(x / 2 - 20, y / 2);
                 Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
-                Thread.Sleep(20);
+                Thread.Sleep(30);
 
-                Console.BackgroundColor= ConsoleColor.Black;
-                Console.ForegroundColor= ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.Clear();
                 Console.Write("\x1b[3J");
                 Console.SetCursorPosition(x / 2 - 20, y / 2);
                 Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
-                Thread.Sleep(20);
+                Thread.Sleep(30);
             }
 
         }
