@@ -1,0 +1,66 @@
+Script started on 2025-02-04 18:15:48-05:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="211" LINES="24"]
+[1m[36m                  -`
+                 .o+`
+                `ooo/
+               `+oooo:
+              `+oooooo:
+              -+oooooo+:
+            `/:-:++oooo+:
+           `/++++/+++++++:
+          `/++++++++++++++:
+         `/+++o[36moooooooo[36moooo/`
+        ./[36mooosssso++osssssso[36m+`
+[36m       .oossssso-````/ossssss+`
+      -osssssso.      :ssssssso.
+     :osssssss/        osssso+++.
+    /ossssssss/        +ssssooo/-
+  `/ossssso+/:-        -:/+osssso+-
+ `+sso+:-`                 `.-/+oso:
+`++:.                           `-/+/
+.`                                 `/[m[1G[18A[m[?7l[41C[m[1m[36mmax[m@[1m[36marchlinux[m
+[41C-------------
+[41C[m[1m[36mOS[m: [mArch Linux x86_64
+[41C[m[1m[36mHost[m: [mMS-7E28 (1.0)
+[41C[m[1m[36mKernel[m: [mLinux 6.12.10-zen1-1-zen
+[41C[m[1m[36mUptime[m: [m15 days, 17 hours, 53 mins
+[41C[m[1m[36mPackages[m: [m2214 (pacman), 9 (flatpak-system), 6 (flatpak-user)
+[41C[m[1m[36mShell[m: [mzsh 5.9
+[41C[m[1m[36mDisplay (LG FULL HD)[m: [m1080x1920 @ 75 Hz in 22" [External]
+[41C[m[1m[36mDisplay (24G1WG4)[m: [m1920x1080 @ 144 Hz in 24" [External] *
+[41C[m[1m[36mDE[m: [mKDE Plasma 6.2.5
+[41C[m[1m[36mWM[m: [mKWin (Wayland)
+[41C[m[1m[36mWM Theme[m: [mBreeze
+[41C[m[1m[36mTheme[m: [mBreeze (Dark) [Qt], Breeze-Dark [GTK2], Breeze [GTK3/4]
+[41C[m[1m[36mIcons[m: [mbreeze-dark [Qt], breeze-dark [GTK2/3/4]
+[41C[m[1m[36mFont[m: [mOpen Sans (10pt) [Qt], Open Sans (10pt) [GTK2/3/4]
+[41C[m[1m[36mCursor[m: [mbreeze (24px)
+[41C[m[1m[36mTerminal[m: [mscript
+[41C[m[1m[36mCPU[m: [mAMD Ryzen 5 7600 (12) @ 5.17 GHz
+[41C[m[1m[36mGPU 1[m: [mAMD Radeon RX 6600 [Discrete]
+[41C[m[1m[36mGPU 2[m: [mAMD Raphael [Integrated]
+[41C[m[1m[36mMemory[m: [m10.78 GiB / 29.06 GiB ([32m37%[m)
+[41C[m[1m[36mSwap[m: [m11.00 MiB / 30.34 GiB ([32m0%[m)
+[41C[m[1m[36mDisk (]8;;file:///\/]8;;\)[m: [m333.76 GiB / 456.47 GiB ([93m73%[m) - ext4
+[41C[m[1m[36mDisk (]8;;file:///mnt/ArchExtras\/mnt/ArchExtras]8;;\)[m: [m405.05 GiB / 659.10 GiB ([93m61%[m) - ext4
+[41C[m[1m[36mDisk (]8;;file:///mnt/ArchGames\/mnt/ArchGames]8;;\)[m: [m623.43 GiB / 710.44 GiB ([91m88%[m) - ext4
+[41C[m[1m[36mLocal IP (wlan0)[m: [m192.168.0.187/24
+[41C[m[1m[36mLocale[m: [men_US.UTF-8
+[41C
+[41C[m[40m   [41m   [42m   [43m   [44m   [45m   [46m   [47m   [m
+[41C[100m   [101m   [102m   [103m   [104m   [105m   [106m   [107m   [m
+[?7h/home/max/.zshrc:cd:16: no such file or directory: Desktop/workdir
+[1m[7m%[27m[1m[0m                                                                                                                                                                                                                   [0m[27m[24m[J[1m[[32mmax[39m@[36marchlinux[39m [33m~/Desktop/connectfour-cs[39m]$ > [0m[K[?2004h[4ms[24m[24m[1m[31ms[1m[31mc[0m[39m[1m[31ms[1m[31mc[1m[31mr[0m[39m[1m[31mr[1m[31mi[0m[39m[1m[31mi[1m[31mp[0m[39m[0m[32ms[0m[32mc[0m[32mr[0m[32mi[0m[32mp[32mt[39m[1m[31ms[1m[31mc[1m[31mr[1m[31mi[1m[31mp[1m[31mt[1m[31mc[0m[39m[0m[32ms[0m[32mc[0m[32mr[0m[32mi[0m[32mp[0m[32mt[0m[32mc[32ms[39m[?2004l
+C# Script execution engine. Version 3.28.4.0.
+Copyright (C) 2004-2018 Oleg Shilo. www.csscript.net (github.com/oleg-shilo/cs-script)
+
+   CLR:             4.0.30319.42000
+   System:          Unix 6.12.10.1
+   Architecture:    x64
+   Install dir:     <not integrated>
+   Location:        /usr/share/cs-script/cscs.exe
+   Config file:     /usr/share/cs-script/css_config.xml
+   Compiler:        <default>
+   NuGet manager:   /usr/bin/nuget
+   NuGet cache:     /home/max/.config/CS-Script/nuget
+
+[1m[7m%[27m[1m[0m                                                        
