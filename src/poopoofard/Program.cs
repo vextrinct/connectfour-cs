@@ -8,7 +8,7 @@ namespace poopoofard
         // TOO MUCH!!!!!
         // literal bloat
         // who needs objects when you have bits
-        static byte[] A = {0,0,0,1,2,1};
+        static byte[] A = {0,0,0,0,0,0};
         static byte[] B = {0,0,0,0,0,0};
         static byte[] C = {0,0,0,0,0,0};
         static byte[] D = {0,0,0,0,0,0};
@@ -23,6 +23,8 @@ namespace poopoofard
 
         static bool P1turn = true;
         static int cursor = 0;
+        static string COIN = "▇▇▇";
+        static int WIDTH = 3;
 
 
         static void Clear()
@@ -56,32 +58,33 @@ namespace poopoofard
                     if(board[j][i] == RED)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("X");
+                        Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     } 
                     else if(board[j][i] == YELLOW)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write("O");
+                        Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     }
                     else
                     {
-                        Console.Write("_");
+                        Console.Write("___");
                     }
                     
                     Console.Write("|");
                 }
                 Console.Write("\n");
             }
-            WriteDash(10);
+            WriteDash(24);
         }
         static void ShowHeader()
         {
             Title("Connect four");
-            Console.WriteLine("\nproudly enshittified by: Maxim K\n");
+            Console.WriteLine("\nproudly enshittified by: Maxim K");
+            Console.WriteLine("Use arrow keys(<- ->) to move the cursor. Press space to drop.\n");
             WriteDash(60);
-            Console.WriteLine("\nA B C D E F G\n");
+            Console.WriteLine("\n A   B   C   D   E   F   G\n");
         }
         static string StrMul(string text, int count)
         {
@@ -102,9 +105,9 @@ namespace poopoofard
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
             }
-            Console.WriteLine(StrMul(" ", cursor * 2) + (P1turn ? "X" : "O") + "            ");
+            Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) +$"{COIN}         ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(StrMul(" ", cursor * 2) + "V              ");
+            Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) + " V              ");
         }
         static void Refresh()
         {
@@ -165,7 +168,8 @@ namespace poopoofard
 
         static bool IsWinner()
         {
-            int coin = P1turn ? 1 : 2;
+            // Vertical
+            int coin = P1turn ? RED : YELLOW;
             for (int i = 0; i < board.Count; i++)
             {
                 int same = 0;
@@ -185,12 +189,36 @@ namespace poopoofard
                     }
                 }
             }
+            // Horizontal
+            for (int i = 0; i < 6; i++)
+            {
+                int same = 0;
+                for (int j = 0; j < board.Count; j++)
+                {
+                    if (board[j][i] == coin)
+                    {
+                        same++;
+                        if (same >= 4)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        same = 0;
+                    }
+                }
+            }
+
+
 
             return false;
         }
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
             while (!IsWinner())
             {
                 Round();
@@ -198,7 +226,7 @@ namespace poopoofard
             int x = Console.WindowWidth;
             int y = Console.WindowHeight;
             
-            for (int i = 0; i < 14; i++)
+            for (int i = 0; i < 4; i++)
             {
 
                 Console.BackgroundColor = ConsoleColor.White;
@@ -207,7 +235,7 @@ namespace poopoofard
                 Console.Write("\x1b[3J");
                 Console.SetCursorPosition(x / 2 - 20, y / 2);
                 Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
-                Thread.Sleep(30);
+                Thread.Sleep(100);
 
                 Console.BackgroundColor = ConsoleColor.Black;
                 Console.ForegroundColor = ConsoleColor.White;
@@ -215,7 +243,7 @@ namespace poopoofard
                 Console.Write("\x1b[3J");
                 Console.SetCursorPosition(x / 2 - 20, y / 2);
                 Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
-                Thread.Sleep(30);
+                Thread.Sleep(100);
             }
 
         }
