@@ -23,9 +23,9 @@ namespace poopoofard
 
         static bool P1turn = true;
         static int cursor = 0;
+
         static string COIN = "▇▇▇";
         static int WIDTH = 3;
-
 
         static void Clear()
         {
@@ -42,7 +42,6 @@ namespace poopoofard
         {
             Clear();
             //Console.Write("\x1b[3J");
-
             WriteDash(title.Length);
             Console.WriteLine("\n  " + title);
             WriteDash(title.Length);
@@ -209,16 +208,111 @@ namespace poopoofard
                     }
                 }
             }
-
-
-
             return false;
         }
 
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+            bool vertical = false;
+            bool inverse = false;
+            int offsetX = -2;
+            int offsetY = 0;
+            int posX = 0;
+            int posY = 0;
 
+            for (int i = 0; i < 80; i++) 
+            {
+                if (i % 2 == 0 && i != 0)
+                {
+                    inverse = !inverse;
+                }
+
+                for (int j = 0; j < (vertical ? Console.WindowHeight - offsetY : Console.WindowWidth - offsetX); j++) 
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    
+                    Console.SetCursorPosition(posX, posY);
+                    
+                    Console.Write(" ");
+                    if (vertical)
+                    {
+                        Console.SetCursorPosition(posX - (inverse ? -1 : 1), posY);
+                        Console.Write(" ");
+                        Console.SetCursorPosition(posX - (inverse ? -2 : 2), posY);
+                        Console.Write(" ");
+                        posY += inverse ? -1 : 1; 
+                        if(posY > Console.WindowHeight - 1) { posY = Console.WindowHeight-1; }
+                    }
+                    else 
+                    { 
+                        posX += inverse ? -1 : 1; 
+                        if (posX>Console.WindowWidth-1) { posX = Console.WindowWidth-1; }
+                    }    
+                }
+
+                if(vertical)
+                {
+                    offsetX+=3;
+                }
+                else
+                {
+                    offsetY++;
+                }
+                vertical = !vertical;
+                
+                Thread.Sleep(1);
+            }
+            offsetY = 30;
+            for (int i = 0; i < 81; i++)
+            {
+                if (i % 2 == 0 && i != 0)
+                {
+                    inverse = !inverse;
+                }
+
+                for (int j = 0; j < (vertical ? Console.WindowHeight - offsetY : Console.WindowWidth - offsetX); j++)
+                {
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+
+
+                    Console.SetCursorPosition(posX, posY);
+
+                    Console.Write(" ");
+                    if (vertical)
+                    {
+                        Console.SetCursorPosition(posX - (inverse ? -1 : 1), posY);
+                        Console.Write(" ");
+                        Console.SetCursorPosition(posX - (inverse ? -2 : 2), posY);
+                        Console.Write(" ");
+                        posY += inverse ? -1 : 1;
+                        if (posY > Console.WindowHeight - 1) { posY = Console.WindowHeight - 1; }
+                        if (posY <= 0) { posY = 0; }
+                    }
+                    else
+                    {
+                        posX += inverse ? -1 : 1;
+                        if (posX <=0) { posX = 0; }
+                    }
+                }
+
+                if (vertical)
+                {
+                    offsetX -= 3;
+                }
+                else
+                {
+                    offsetY--;
+                }
+                vertical = !vertical;
+
+                Thread.Sleep(1);
+            }
+
+            Console.Read();
             while (!IsWinner())
             {
                 Round();
