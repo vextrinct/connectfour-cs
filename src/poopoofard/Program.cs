@@ -110,6 +110,8 @@ namespace poopoofard
         }
         static void Refresh()
         {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
             ShowHeader();
             DrawCursor();
             ShowGrid();
@@ -214,105 +216,40 @@ namespace poopoofard
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            bool vertical = false;
-            bool inverse = false;
-            int offsetX = -2;
-            int offsetY = 0;
-            int posX = 0;
-            int posY = 0;
-
-            for (int i = 0; i < 80; i++) 
+            /*for (int i = 0; i < 80; i++) 
             {
-                if (i % 2 == 0 && i != 0)
+                int offsetX = 0;
+                int offsetY = 0;
+                int posX = 0;
+                int posY = 0;
+                bool inverse = false;
+                Console.SetCursorPosition(0, 0);
+                for (int j = 0; j < i; j++)
                 {
-                    inverse = !inverse;
-                }
-
-                for (int j = 0; j < (vertical ? Console.WindowHeight - offsetY : Console.WindowWidth - offsetX); j++) 
-                {
+                    
                     Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.White;
-
                     
-                    Console.SetCursorPosition(posX, posY);
-                    
-                    Console.Write(" ");
-                    if (vertical)
+                    if (inverse) { Console.SetCursorPosition(offsetX, posY); }
+                    Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - offsetX)));
+                    //if (inverse) { Console.SetCursorPosition(offsetX, posY); }
+                    offsetX += 1;
+
+                    for (int k = 0; k < Console.WindowHeight - offsetY - 1; k++)
                     {
-                        Console.SetCursorPosition(posX - (inverse ? -1 : 1), posY);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(posX - (inverse ? -2 : 2), posY);
-                        Console.Write(" ");
-                        posY += inverse ? -1 : 1; 
-                        if(posY > Console.WindowHeight - 1) { posY = Console.WindowHeight-1; }
-                    }
-                    else 
-                    { 
-                        posX += inverse ? -1 : 1; 
-                        if (posX>Console.WindowWidth-1) { posX = Console.WindowWidth-1; }
-                    }    
-                }
-
-                if(vertical)
-                {
-                    offsetX+=3;
-                }
-                else
-                {
-                    offsetY++;
-                }
-                vertical = !vertical;
-                
-                Thread.Sleep(1);
-            }
-            offsetY = 30;
-            for (int i = 0; i < 81; i++)
-            {
-                if (i % 2 == 0 && i != 0)
-                {
-                    inverse = !inverse;
-                }
-
-                for (int j = 0; j < (vertical ? Console.WindowHeight - offsetY : Console.WindowWidth - offsetX); j++)
-                {
-                    Console.BackgroundColor = ConsoleColor.Black;
-                    Console.ForegroundColor = ConsoleColor.White;
-
-
-                    Console.SetCursorPosition(posX, posY);
-
-                    Console.Write(" ");
-                    if (vertical)
-                    {
-                        Console.SetCursorPosition(posX - (inverse ? -1 : 1), posY);
-                        Console.Write(" ");
-                        Console.SetCursorPosition(posX - (inverse ? -2 : 2), posY);
+                        Console.SetCursorPosition(inverse ? offsetX/2 : Console.WindowWidth - offsetX, posY);
                         Console.Write(" ");
                         posY += inverse ? -1 : 1;
-                        if (posY > Console.WindowHeight - 1) { posY = Console.WindowHeight - 1; }
-                        if (posY <= 0) { posY = 0; }
+                        if (posY>=Console.WindowHeight)
+                        {
+                            posY = Console.WindowHeight-1;
+                        }
                     }
-                    else
-                    {
-                        posX += inverse ? -1 : 1;
-                        if (posX <=0) { posX = 0; }
-                    }
+                    offsetY += 1;
+                    inverse = !inverse;
                 }
-
-                if (vertical)
-                {
-                    offsetX -= 3;
-                }
-                else
-                {
-                    offsetY--;
-                }
-                vertical = !vertical;
-
-                Thread.Sleep(1);
-            }
-
-            Console.Read();
+                Thread.Sleep(1000);
+            }*/
             while (!IsWinner())
             {
                 Round();
