@@ -17,7 +17,7 @@ namespace poopoofard
         static List<byte[]> board = new List<byte[]>() {A,B,C,D,E,F,G};
         */
 
-        // why do we have to do this terribleness
+        // but why do we have to do this terribleness
         static List<Column> board = new List<Column>() {new Column(), new Column() , new Column() , new Column() , new Column() , new Column() , new Column() };
 
         const byte RED = 1;
@@ -157,7 +157,7 @@ namespace poopoofard
                     //
                     // total_hours_wasted_here = 234;
                     //
-                    board[cursor].SetCell(i>0?coin==0?i:i-1:0, i != 0 ? P1turn ? RED : YELLOW : coin == (P1turn ? RED : YELLOW) ? P1turn ? RED : YELLOW : P1turn ? YELLOW : RED); // terniary operator my beloved
+                    board[cursor].SetCell(i>0?coin==0?i:i-1:0,i!= 0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED); // terniary operator my beloved
                     if(i==0)
                     {
                         P1turn = !P1turn;
@@ -218,8 +218,8 @@ namespace poopoofard
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            ScreenEffect fx = new ScreenEffect();
-            fx.SpiralIn();
+            //ScreenEffect fx = new ScreenEffect();
+            //fx.SpiralIn();
 
             while (!IsWinner())
             {
@@ -247,7 +247,6 @@ namespace poopoofard
                 Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
                 Thread.Sleep(100);
             }
-
         }
     }
 }
