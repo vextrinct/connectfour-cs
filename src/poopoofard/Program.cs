@@ -4,10 +4,8 @@ namespace poopoofard
 {
     internal class Program
     {
-        // 8 bits per cell
-        // TOO MUCH!!!!!
-        // literal bloat
-        // who needs objects when you have bits
+        // this is the way
+        /*
         static byte[] A = {0,0,0,0,0,0};
         static byte[] B = {0,0,0,0,0,0};
         static byte[] C = {0,0,0,0,0,0};
@@ -17,6 +15,10 @@ namespace poopoofard
         static byte[] G = {0,0,0,0,0,0};
 
         static List<byte[]> board = new List<byte[]>() {A,B,C,D,E,F,G};
+        */
+
+        // why do we have to do this terribleness
+        static List<Column> board = new List<Column>() {new Column(), new Column() , new Column() , new Column() , new Column() , new Column() , new Column() };
 
         const byte RED = 1;
         const byte YELLOW = 2;
@@ -54,13 +56,13 @@ namespace poopoofard
             {
                 for(int j = 0; j < board.Count; j++)
                 {
-                    if(board[j][i] == RED)
+                    if(board[j].GetCell(i) == RED)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     } 
-                    else if(board[j][i] == YELLOW)
+                    else if(board[j].GetCell(i) == YELLOW)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write(COIN);
@@ -138,13 +140,13 @@ namespace poopoofard
             }
             for (int i = 0; i < 6; i++)
             {
-                byte coin = board[cursor][i];
+                byte coin = board[cursor].GetCell(i);
                 if (coin == 0)
                 {
-                    board[cursor][i] = P1turn ? RED : YELLOW;
+                    board[cursor].SetCell(i, P1turn ? RED : YELLOW);
                     Refresh();
                     Thread.Sleep(50);
-                    board[cursor][i] = 0;
+                    board[cursor].SetCell(i,0);
                 }
                 if (i==5 || coin != 0)
                 {
@@ -155,7 +157,7 @@ namespace poopoofard
                     //
                     // total_hours_wasted_here = 234;
                     //
-                    board[cursor][i>0?coin==0?i:i-1:0]=i!=0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED; // terniary operator my beloved
+                    board[cursor].SetCell(i>0?coin==0?i:i-1:0, i != 0 ? P1turn ? RED : YELLOW : coin == (P1turn ? RED : YELLOW) ? P1turn ? RED : YELLOW : P1turn ? YELLOW : RED); // terniary operator my beloved
                     if(i==0)
                     {
                         P1turn = !P1turn;
@@ -176,7 +178,7 @@ namespace poopoofard
                 int same = 0;
                 for(int j = 0; j < 6; j++)
                 {
-                    if(board[i][j] == coin)
+                    if(board[i].GetCell(j) == coin)
                     {
                         same++;
                         if(same>=4)
@@ -196,7 +198,7 @@ namespace poopoofard
                 int same = 0;
                 for (int j = 0; j < board.Count; j++)
                 {
-                    if (board[j][i] == coin)
+                    if (board[j].GetCell(i) == coin)
                     {
                         same++;
                         if (same >= 4)
@@ -216,40 +218,9 @@ namespace poopoofard
         static void Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            /*for (int i = 0; i < 80; i++) 
-            {
-                int offsetX = 0;
-                int offsetY = 0;
-                int posX = 0;
-                int posY = 0;
-                bool inverse = false;
-                Console.SetCursorPosition(0, 0);
-                for (int j = 0; j < i; j++)
-                {
-                    
-                    Console.BackgroundColor = ConsoleColor.White;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    
-                    if (inverse) { Console.SetCursorPosition(offsetX, posY); }
-                    Console.Write(String.Concat(Enumerable.Repeat(" ", Console.WindowWidth - offsetX)));
-                    //if (inverse) { Console.SetCursorPosition(offsetX, posY); }
-                    offsetX += 1;
+            ScreenEffect fx = new ScreenEffect();
+            fx.SpiralIn();
 
-                    for (int k = 0; k < Console.WindowHeight - offsetY - 1; k++)
-                    {
-                        Console.SetCursorPosition(inverse ? offsetX/2 : Console.WindowWidth - offsetX, posY);
-                        Console.Write(" ");
-                        posY += inverse ? -1 : 1;
-                        if (posY>=Console.WindowHeight)
-                        {
-                            posY = Console.WindowHeight-1;
-                        }
-                    }
-                    offsetY += 1;
-                    inverse = !inverse;
-                }
-                Thread.Sleep(1000);
-            }*/
             while (!IsWinner())
             {
                 Round();
