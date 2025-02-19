@@ -29,6 +29,15 @@ namespace poopoofard
 
         static bool playing = true;
 
+        static void Init()
+        {
+            for (int i = 0; i < board.Count; i++)
+            {
+                Array.Clear(board[i]);
+            }
+            Console.Clear();
+            Console.Write("\x1b[3J");
+        }
         static void Clear()
         {
             Console.SetCursorPosition(0, 0);
@@ -245,7 +254,7 @@ namespace poopoofard
             while(!playing)
             {
                 Refresh(flipflop? board : tempBoard);
-                Console.WriteLine("\n\nPress any key to play again...");
+                Console.WriteLine("\n\nPress any key to play again, Q to quit...");
                 Thread.Sleep(200);
                 flipflop = !flipflop;
             }
@@ -254,6 +263,7 @@ namespace poopoofard
         {
             while (true)
             {
+                Init();
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
                 playing = true;
                 //ScreenEffect fx = new ScreenEffect();
@@ -265,7 +275,7 @@ namespace poopoofard
                 }
                 int x = Console.WindowWidth;
                 int y = Console.WindowHeight;
-
+                playing = false;
                 for (int i = 0; i < 4; i++)
                 {
 
@@ -285,14 +295,18 @@ namespace poopoofard
                     Console.Write($"!!!!!!!!!!!!!!{(P1turn ? "PLAYER 2" : "PLAYER 1")} WON!!!!!!!!!!!!!!");
                     Thread.Sleep(100);
                 }
-                playing = false;
+                
                 Thread.Sleep(1000);
                 Console.Clear();
                 Console.Write("\x1b[3J");
                 Thread t = new Thread(() => ShowWinner(tempBoard));
                 t.Start();
 
-                Console.ReadKey();
+                if(Console.ReadKey().Key == ConsoleKey.Q)
+                {
+                    break;
+                }
+                
             }
         }
     }
