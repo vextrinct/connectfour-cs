@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 namespace poopoofard
 {
     internal class Program
     {
         // this is the way
-        /*
+        
         static byte[] A = {0,0,0,0,0,0};
         static byte[] B = {0,0,0,0,0,0};
         static byte[] C = {0,0,0,0,0,0};
@@ -15,19 +16,18 @@ namespace poopoofard
         static byte[] G = {0,0,0,0,0,0};
 
         static List<byte[]> board = new List<byte[]>() {A,B,C,D,E,F,G};
-        */
-
-        // but why do we have to do this terribleness
-        static List<Column> board = new List<Column>() {new Column(), new Column() , new Column() , new Column() , new Column() , new Column() , new Column() };
 
         const byte RED = 1;
         const byte YELLOW = 2;
+        const byte WINNER = 3;
 
         static bool P1turn = true;
         static int cursor = 0;
 
         static string COIN = "▇▇▇";
         static int WIDTH = 3;
+
+        static bool playing = true;
 
         static void Clear()
         {
@@ -50,21 +50,27 @@ namespace poopoofard
             Console.WriteLine("");
         }
 
-        public static void ShowGrid()
+        public static void ShowGrid(List<byte[]> board)
         {
             for(int i = 0; i < 6; i++)
             {
                 for(int j = 0; j < board.Count; j++)
                 {
-                    if(board[j].GetCell(i) == RED)
+                    if (board[j][i] == RED)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     } 
-                    else if(board[j].GetCell(i) == YELLOW)
+                    else if (board[j][i] == YELLOW)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write(COIN);
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    else if (board[j][i] == WINNER)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     }
@@ -110,13 +116,13 @@ namespace poopoofard
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) + " V              ");
         }
-        static void Refresh()
+        static void Refresh(List<byte[]> board)
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
             ShowHeader();
             DrawCursor();
-            ShowGrid();
+            ShowGrid(board);
         }
         static void Round()
         {
@@ -134,19 +140,19 @@ namespace poopoofard
                         break;
                 }
                 DrawCursor();
-                ShowGrid();
+                ShowGrid(board);
 
                 input = Console.ReadKey().Key;
             }
             for (int i = 0; i < 6; i++)
             {
-                byte coin = board[cursor].GetCell(i);
+                byte coin = board[cursor][i];
                 if (coin == 0)
                 {
-                    board[cursor].SetCell(i, P1turn ? RED : YELLOW);
-                    Refresh();
+                    board[cursor][i] = P1turn ? RED : YELLOW;
+                    Refresh(board);
                     Thread.Sleep(50);
-                    board[cursor].SetCell(i,0);
+                    board[cursor][i] = 0;
                 }
                 if (i==5 || coin != 0)
                 {
@@ -157,7 +163,7 @@ namespace poopoofard
                     //
                     // total_hours_wasted_here = 234;
                     //
-                    board[cursor].SetCell(i>0?coin==0?i:i-1:0,i!= 0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED); // terniary operator my beloved
+                    board[cursor][i>0?coin==0?i:i-1:0]=i!=0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED; // terniary operator my beloved
                     if(i==0)
                     {
                         P1turn = !P1turn;
@@ -168,22 +174,33 @@ namespace poopoofard
             }
             P1turn = !P1turn;
         }
-
-        static bool IsWinner()
+        static List<byte[]> IsWinner()
         {
             // Vertical
-            int coin = P1turn ? RED : YELLOW;
+            int coin = P1turn ? YELLOW : RED;
+            
+            List<byte[]> tempBoard;
+           
             for (int i = 0; i < board.Count; i++)
             {
                 int same = 0;
-                for(int j = 0; j < 6; j++)
+                // good lord i did not know c# was this terrible.
+                // DONT DO THIS FOR THE LOVE OF GOD
+                tempBoard = new List<byte[]>(board.Count);
+
+                foreach (var byteArray in board)
                 {
-                    if(board[i].GetCell(j) == coin)
+                    tempBoard.Add((byte[])byteArray.Clone()); 
+                }
+                for (int j = 0; j < 6; j++)
+                {
+                    if(board[i][j] == coin)
                     {
                         same++;
+                        tempBoard[i][j] = WINNER;
                         if(same>=4)
                         {
-                            return true;
+                            return tempBoard;
                         }
                     }
                     else
@@ -196,14 +213,21 @@ namespace poopoofard
             for (int i = 0; i < 6; i++)
             {
                 int same = 0;
+                tempBoard = new List<byte[]>(board.Count);
+
+                foreach (var byteArray in board)
+                {
+                    tempBoard.Add((byte[])byteArray.Clone());
+                }
                 for (int j = 0; j < board.Count; j++)
                 {
-                    if (board[j].GetCell(i) == coin)
+                    if (board[j][i] == coin)
                     {
                         same++;
+                        tempBoard[j][i] = WINNER;
                         if (same >= 4)
                         {
-                            return true;
+                            return tempBoard;
                         }
                     }
                     else
@@ -212,40 +236,63 @@ namespace poopoofard
                     }
                 }
             }
-            return false;
+            return new List<byte[]>();
         }
 
+        static void ShowWinner(List<byte[]> tempBoard)
+        {
+            bool flipflop = false;
+            while(!playing)
+            {
+                Refresh(flipflop? board : tempBoard);
+                Console.WriteLine("\n\nPress any key to play again...");
+                Thread.Sleep(200);
+                flipflop = !flipflop;
+            }
+        }
         static void Main(string[] args)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-            //ScreenEffect fx = new ScreenEffect();
-            //fx.SpiralIn();
-
-            while (!IsWinner())
+            while (true)
             {
-                Round();
-            }
-            int x = Console.WindowWidth;
-            int y = Console.WindowHeight;
-            
-            for (int i = 0; i < 4; i++)
-            {
+                Console.OutputEncoding = System.Text.Encoding.UTF8;
+                playing = true;
+                //ScreenEffect fx = new ScreenEffect();
+                //fx.SpiralIn();
+                List<byte[]> tempBoard;
+                while ((tempBoard = IsWinner()).Count == 0)
+                {
+                    Round();
+                }
+                int x = Console.WindowWidth;
+                int y = Console.WindowHeight;
 
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.ForegroundColor = ConsoleColor.Black;
+                for (int i = 0; i < 4; i++)
+                {
+
+                    Console.BackgroundColor = P1turn ? ConsoleColor.Yellow : ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Clear();
+                    Console.Write("\x1b[3J");
+                    Console.SetCursorPosition(x / 2 - 20, y / 2);
+                    Console.Write($"!!!!!!!!!!!!!!{(P1turn ? "PLAYER 2" : "PLAYER 1")} WON!!!!!!!!!!!!!!");
+                    Thread.Sleep(100);
+
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Clear();
+                    Console.Write("\x1b[3J");
+                    Console.SetCursorPosition(x / 2 - 20, y / 2);
+                    Console.Write($"!!!!!!!!!!!!!!{(P1turn ? "PLAYER 2" : "PLAYER 1")} WON!!!!!!!!!!!!!!");
+                    Thread.Sleep(100);
+                }
+                playing = false;
+                Thread.Sleep(1000);
                 Console.Clear();
                 Console.Write("\x1b[3J");
-                Console.SetCursorPosition(x / 2 - 20, y / 2);
-                Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
-                Thread.Sleep(100);
+                Thread t = new Thread(() => ShowWinner(tempBoard));
+                t.Start();
 
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Clear();
-                Console.Write("\x1b[3J");
-                Console.SetCursorPosition(x / 2 - 20, y / 2);
-                Console.Write("!!!!!!!!!!!!!!YOU WON!!!!!!!!!!!!!!");
-                Thread.Sleep(100);
+                Console.ReadKey();
             }
         }
     }
