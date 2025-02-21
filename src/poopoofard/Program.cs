@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
-using System.Text.Json;
 namespace poopoofard
 {
     internal class Program
@@ -33,7 +33,7 @@ namespace poopoofard
         {
             for (int i = 0; i < board.Count; i++)
             {
-                Array.Clear(board[i]);
+                Array.Clear(board[i],0,board.Count-1);
             }
             Console.Clear();
             Console.Write("\x1b[3J");
@@ -304,6 +304,8 @@ namespace poopoofard
 
                 if(Console.ReadKey().Key == ConsoleKey.Q)
                 {
+
+                    t.Abort();
                     break;
                 }
                 
