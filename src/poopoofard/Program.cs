@@ -63,7 +63,7 @@ namespace poopoofard
         {
             for(int i = 0; i < 6; i++)
             {
-                for(int j = 0; j < board.Count; j++)
+                for (int j = 0; j < board.Count; j++)
                 {
                     if (board[j][i] == RED)
                     {
@@ -183,6 +183,7 @@ namespace poopoofard
             }
             P1turn = !P1turn;
         }
+        // i should be executed for this terrible function
         static List<byte[]> IsWinner()
         {
             // Vertical
@@ -245,6 +246,62 @@ namespace poopoofard
                     }
                 }
             }
+
+            // Diagonal
+            // Works, but barely. Currently cant check diagonals lower than the top 2 left corners.
+            // Sometimes gets schizophrenic and thinks that 3 coins are 4.
+            for (int i = 0; i < board.Count; i++)
+            {
+                int same = 0;
+                // OVERFLOW idea: when i is less then 0 or above board.count, overflow is how much outside the limit i is.
+                // Then we can use it to offset the height :>
+                // terrible way but my code is alredy shit enough. One shit stain wont get rid of the others.
+                //int overflow = Math.Abs();
+                tempBoard = new List<byte[]>(board.Count);
+
+                foreach (var byteArray in board)
+                {
+                    tempBoard.Add((byte[])byteArray.Clone());
+                }
+                for (int j = 0; j < Math.Clamp(board.Count-i,0,6); j++)
+                {
+                    if (board[j+i][j] == coin)
+                    {
+                        same++;
+                        tempBoard[j+i][j] = WINNER;
+                        if (same >= 4)
+                        {
+                            return tempBoard;
+                        }
+                    }
+                    else
+                    {
+                        same = 0;
+                    }
+
+                }
+                // this fella's schizophrenic.
+                // Don't mind him, i'll call him bob.
+                for (int j = 0; j < Math.Clamp(i,0,6); j++)
+                {
+                    if (board[i-j][j] == coin)
+                    {
+                        same++;
+                        tempBoard[i-j][j] = WINNER;
+                        if (same >= 4)
+                        {
+                            return tempBoard;
+                        }
+                    }
+                    else
+                    {
+                        same = 0;
+                    }
+
+                }
+
+            }
+
             return new List<byte[]>();
         }
 
@@ -297,14 +354,17 @@ namespace poopoofard
                 }
                 
                 Thread.Sleep(1000);
+
+                while (Console.KeyAvailable)
+                    Console.ReadKey(false);
                 Console.Clear();
                 Console.Write("\x1b[3J");
+
                 Thread t = new Thread(() => ShowWinner(tempBoard));
                 t.Start();
 
                 if(Console.ReadKey().Key == ConsoleKey.Q)
                 {
-
                     t.Abort();
                     break;
                 }
