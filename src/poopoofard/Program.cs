@@ -6,16 +6,11 @@ namespace poopoofard
     internal class Program
     {
         // this is the way
-        
-        static byte[] A = {0,0,0,0,0,0};
-        static byte[] B = {0,0,0,0,0,0};
-        static byte[] C = {0,0,0,0,0,0};
-        static byte[] D = {0,0,0,0,0,0};
-        static byte[] E = {0,0,0,0,0,0};
-        static byte[] F = {0,0,0,0,0,0};
-        static byte[] G = {0,0,0,0,0,0};
+        static byte[,] board = new byte[7,6];
 
-        static List<byte[]> board = new List<byte[]>() {A,B,C,D,E,F,G};
+        static int sizeX = board.GetLength(0);
+        static int sizeY = board.GetLength(1);
+        static int numCells = board.Length;
 
         const byte RED = 1;
         const byte YELLOW = 2;
@@ -28,56 +23,36 @@ namespace poopoofard
         static int WIDTH = 3;
 
         static bool playing = true;
+        static int counter = 0;
 
         static void Init()
         {
-            for (int i = 0; i < board.Count; i++)
+            counter = 0;
+            for (int i = 0; i < board.GetLength(0); i++)
             {
-                Array.Clear(board[i],0,board.Count-1);
+                Array.Clear(board,0,board.Length);
             }
-            Console.Clear();
-            Console.Write("\x1b[3J");
+            Utils.FullClear(); 
         }
-        static void Clear()
+        public static void ShowGrid(byte[,] board)
         {
-            Console.SetCursorPosition(0, 0);
-        }
-        static void WriteDash(int length)
-        {
-            for (int i = 0; i < length + 4; i++)
+            for(int i = 0; i < sizeY; i++)
             {
-                Console.Write("-");
-            }
-        }
-        public static void Title(string title)
-        {
-            Clear();
-            //Console.Write("\x1b[3J");
-            WriteDash(title.Length);
-            Console.WriteLine("\n  " + title);
-            WriteDash(title.Length);
-            Console.WriteLine("");
-        }
-
-        public static void ShowGrid(List<byte[]> board)
-        {
-            for(int i = 0; i < 6; i++)
-            {
-                for (int j = 0; j < board.Count; j++)
+                for (int j = 0; j < sizeX; j++)
                 {
-                    if (board[j][i] == RED)
+                    if (board[j,i] == RED)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     } 
-                    else if (board[j][i] == YELLOW)
+                    else if (board[j,i] == YELLOW)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     }
-                    else if (board[j][i] == WINNER)
+                    else if (board[j,i] == WINNER)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write(COIN);
@@ -85,21 +60,23 @@ namespace poopoofard
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write("___");
                     }
-                    
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     Console.Write("|");
                 }
                 Console.Write("\n");
             }
-            WriteDash(24);
+            Utils.WriteDash(24);
+            Console.ForegroundColor = ConsoleColor.White;
         }
         static void ShowHeader()
         {
-            Title("Connect four");
+            Utils.Title("Connect four");
             Console.WriteLine("\nproudly enshittified by: Maxim K");
             Console.WriteLine("Use arrow keys(<- ->) to move the cursor. Press space to drop.\n");
-            WriteDash(60);
+            Utils.WriteDash(60);
             Console.WriteLine("\n A   B   C   D   E   F   G\n");
         }
         static string StrMul(string text, int count)
@@ -125,7 +102,7 @@ namespace poopoofard
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) + " V              ");
         }
-        static void Refresh(List<byte[]> board)
+        static void Refresh(byte[,] board)
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
@@ -153,17 +130,17 @@ namespace poopoofard
 
                 input = Console.ReadKey().Key;
             }
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < sizeY; i++)
             {
-                byte coin = board[cursor][i];
+                byte coin = board[cursor,i];
                 if (coin == 0)
                 {
-                    board[cursor][i] = P1turn ? RED : YELLOW;
+                    board[cursor,i] = P1turn ? RED : YELLOW;
                     Refresh(board);
                     Thread.Sleep(50);
-                    board[cursor][i] = 0;
+                    board[cursor,i] = 0;
                 }
-                if (i==5 || coin != 0)
+                if (i==sizeY-1 || coin != 0)
                 {
                     // When I was writing this code, only I and God knew how it works.
                     // Now only God knows it!!!!
@@ -172,42 +149,34 @@ namespace poopoofard
                     //
                     // total_hours_wasted_here = 234;
                     //
-                    board[cursor][i>0?coin==0?i:i-1:0]=i!=0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED; // terniary operator my beloved
+                    board[cursor,i>0?coin==0?i:i-1:0]=i!=0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED; // terniary operator my beloved
                     if(i==0)
                     {
                         P1turn = !P1turn;
                     }
-
                     break;
                 }
             }
             P1turn = !P1turn;
         }
         // i should be executed for this terrible function
-        static List<byte[]> IsWinner()
+        static byte[,] IsWinner()
         {
             // Vertical
             int coin = P1turn ? YELLOW : RED;
-            
-            List<byte[]> tempBoard;
+            byte[,] tempBoard;
            
-            for (int i = 0; i < board.Count; i++)
+            for (int i = 0; i < sizeX; i++)
             {
                 int same = 0;
-                // good lord i did not know c# was this terrible.
-                // DONT DO THIS FOR THE LOVE OF GOD
-                tempBoard = new List<byte[]>(board.Count);
-
-                foreach (var byteArray in board)
+                tempBoard = board.Clone() as byte[,];
+                
+                for (int j = 0; j < sizeY; j++)
                 {
-                    tempBoard.Add((byte[])byteArray.Clone()); 
-                }
-                for (int j = 0; j < 6; j++)
-                {
-                    if(board[i][j] == coin)
+                    if(board[i,j] == coin)
                     {
                         same++;
-                        tempBoard[i][j] = WINNER;
+                        tempBoard[i,j] = WINNER;
                         if(same>=4)
                         {
                             return tempBoard;
@@ -220,21 +189,17 @@ namespace poopoofard
                 }
             }
             // Horizontal
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < sizeY; i++)
             {
                 int same = 0;
-                tempBoard = new List<byte[]>(board.Count);
+                tempBoard = board.Clone() as byte[,];
 
-                foreach (var byteArray in board)
+                for (int j = 0; j < sizeX; j++)
                 {
-                    tempBoard.Add((byte[])byteArray.Clone());
-                }
-                for (int j = 0; j < board.Count; j++)
-                {
-                    if (board[j][i] == coin)
+                    if (board[j,i] == coin)
                     {
                         same++;
-                        tempBoard[j][i] = WINNER;
+                        tempBoard[j,i] = WINNER;
                         if (same >= 4)
                         {
                             return tempBoard;
@@ -250,25 +215,22 @@ namespace poopoofard
             // Diagonal
             // Works, but barely. Currently cant check diagonals lower than the top 2 left corners.
             // Sometimes gets schizophrenic and thinks that 3 coins are 4.
-            for (int i = 0; i < board.Count; i++)
+            for (int i = -2; i < sizeX + 2; i++)
             {
                 int same = 0;
                 // OVERFLOW idea: when i is less then 0 or above board.count, overflow is how much outside the limit i is.
                 // Then we can use it to offset the height :>
                 // terrible way but my code is alredy shit enough. One shit stain wont get rid of the others.
-                //int overflow = Math.Abs();
-                tempBoard = new List<byte[]>(board.Count);
+                int overflow = i < 0 ? Math.Abs(i) : i > sizeX - 1 ? i+1 - sizeX : 0;
+                int column = Math.Clamp(i, 0, sizeX - 1);
+                tempBoard = board.Clone() as byte[,];
 
-                foreach (var byteArray in board)
+                for (int j = 0; j < Math.Clamp(sizeX - column, 0, sizeY-overflow); j++)
                 {
-                    tempBoard.Add((byte[])byteArray.Clone());
-                }
-                for (int j = 0; j < Math.Clamp(board.Count-i,0,6); j++)
-                {
-                    if (board[j+i][j] == coin)
+                    if (board[j+column,j+overflow] == coin)
                     {
                         same++;
-                        tempBoard[j+i][j] = WINNER;
+                        tempBoard[j+ column,j + overflow] = WINNER;
                         if (same >= 4)
                         {
                             return tempBoard;
@@ -281,13 +243,14 @@ namespace poopoofard
 
                 }
                 // this fella's schizophrenic.
-                // Don't mind him, i'll call him bob.
-                for (int j = 0; j < Math.Clamp(i,0,6); j++)
+                // Don't mind him, he's just also a tiny bit autistic, please be patient
+                same = 0;
+                for (int j = 0; j < column-overflow; j++)
                 {
-                    if (board[i-j][j] == coin)
+                    if (board[column - j,j + overflow] == coin)
                     {
                         same++;
-                        tempBoard[i-j][j] = WINNER;
+                        tempBoard[column - j,j + overflow] = WINNER;
                         if (same >= 4)
                         {
                             return tempBoard;
@@ -302,10 +265,10 @@ namespace poopoofard
 
             }
 
-            return new List<byte[]>();
+            return new byte[0,0];
         }
 
-        static void ShowWinner(List<byte[]> tempBoard)
+        static void ShowWinner(byte[,] tempBoard)
         {
             bool flipflop = false;
             while(!playing)
@@ -323,12 +286,20 @@ namespace poopoofard
                 Init();
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
                 playing = true;
-                //ScreenEffect fx = new ScreenEffect();
-                //fx.SpiralIn();
-                List<byte[]> tempBoard;
-                while ((tempBoard = IsWinner()).Count == 0)
+                byte[,] tempBoard;
+                while ((tempBoard = IsWinner()).GetLength(0) == 0)
                 {
                     Round();
+                    counter++;
+                    if(counter >= numCells)
+                    {
+                        Console.WriteLine("\n\nGrid is full! Press any key to try again, Q to quit...");
+                        if (Console.ReadKey().Key == ConsoleKey.Q)
+                        {
+                            System.Environment.Exit(0);
+                        }
+                        Init();
+                    }
                 }
                 int x = Console.WindowWidth;
                 int y = Console.WindowHeight;
@@ -338,16 +309,14 @@ namespace poopoofard
 
                     Console.BackgroundColor = P1turn ? ConsoleColor.Yellow : ConsoleColor.Red;
                     Console.ForegroundColor = ConsoleColor.Black;
-                    Console.Clear();
-                    Console.Write("\x1b[3J");
+                    Utils.FullClear();
                     Console.SetCursorPosition(x / 2 - 20, y / 2);
                     Console.Write($"!!!!!!!!!!!!!!{(P1turn ? "PLAYER 2" : "PLAYER 1")} WON!!!!!!!!!!!!!!");
                     Thread.Sleep(100);
 
                     Console.BackgroundColor = ConsoleColor.Black;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.Clear();
-                    Console.Write("\x1b[3J");
+                    Utils.FullClear();
                     Console.SetCursorPosition(x / 2 - 20, y / 2);
                     Console.Write($"!!!!!!!!!!!!!!{(P1turn ? "PLAYER 2" : "PLAYER 1")} WON!!!!!!!!!!!!!!");
                     Thread.Sleep(100);
