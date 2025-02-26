@@ -24,7 +24,7 @@ namespace poopoofard
 
         static bool playing = true;
         static int counter = 0;
-
+        // Resets the board.
         static void Init()
         {
             counter = 0;
@@ -34,10 +34,13 @@ namespace poopoofard
             }
             Utils.FullClear(); 
         }
+        // Shows the board
         public static void ShowGrid(byte[,] board)
         {
+            // For each row...
             for(int i = 0; i < sizeY; i++)
             {
+                // In each column...
                 for (int j = 0; j < sizeX; j++)
                 {
                     if (board[j,i] == RED)
@@ -58,12 +61,11 @@ namespace poopoofard
                         Console.Write(COIN);
                         Console.ForegroundColor = ConsoleColor.White;
                     }
+                    // Blank cell
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write("___");
                     }
-                    Console.ForegroundColor = ConsoleColor.Blue;
                     Console.Write("|");
                 }
                 Console.Write("\n");
@@ -71,6 +73,7 @@ namespace poopoofard
             Utils.WriteDash(24);
             Console.ForegroundColor = ConsoleColor.White;
         }
+        // Title
         static void ShowHeader()
         {
             Utils.Title("Connect four");
@@ -79,6 +82,9 @@ namespace poopoofard
             Utils.WriteDash(60);
             Console.WriteLine("\n A   B   C   D   E   F   G\n");
         }
+        // Multiples a string
+        // To: Microsoft
+        // Was is that hard to implement string*string??? This language is already high level ya doofuses!
         static string StrMul(string text, int count)
         {
             string result = "";
@@ -88,6 +94,7 @@ namespace poopoofard
             }
             return result;
         }
+        // Draws the cursor. Can you even read smh my head?
         static void DrawCursor()
         {
             if (P1turn)
@@ -98,10 +105,12 @@ namespace poopoofard
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
             }
-            Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) +$"{COIN}         ");
+            Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) +$"{COIN}                           ");
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) + " V              ");
+            Console.WriteLine(StrMul(" ", cursor * (WIDTH+1)) + " V                               ");
         }
+        // Redraws the entire screen
+        // Very efficient.
         static void Refresh(byte[,] board)
         {
             Console.ForegroundColor = ConsoleColor.White;
@@ -110,8 +119,11 @@ namespace poopoofard
             DrawCursor();
             ShowGrid(board);
         }
+        // Game round
+        // Waits for input, drops the coin, switches turns.
         static void Round()
         {
+            // We move the cursor
             ConsoleKey input = ConsoleKey.Help;
             while (input != ConsoleKey.Spacebar)
             {
@@ -119,10 +131,10 @@ namespace poopoofard
                 switch (input)
                 {
                     case ConsoleKey.LeftArrow:
-                        cursor = Math.Clamp(cursor - 1, 0, 6);
+                        cursor = Utils.Wrap(cursor-1,0,sizeX-1);
                         break;
                     case ConsoleKey.RightArrow:
-                        cursor = Math.Clamp(cursor + 1, 0, 6);
+                        cursor = (cursor+1) % sizeX;
                         break;
                 }
                 DrawCursor();
@@ -130,6 +142,7 @@ namespace poopoofard
 
                 input = Console.ReadKey().Key;
             }
+            // Dropping animation
             for (int i = 0; i < sizeY; i++)
             {
                 byte coin = board[cursor,i];
@@ -150,6 +163,17 @@ namespace poopoofard
                     // total_hours_wasted_here = 234;
                     //
                     board[cursor,i>0?coin==0?i:i-1:0]=i!=0?P1turn?RED:YELLOW:coin==(P1turn?RED:YELLOW)?P1turn?RED:YELLOW:P1turn?YELLOW:RED; // terniary operator my beloved
+                    // Equivalent to:
+                    // We get the correct color,
+                    // If i!=0 (column is not full)
+                    //    Set to current player's coin color
+                    // Else if coin == active color
+                    //    keep it
+                    // Else
+                    //    flip it
+                    
+                    // If the column is full, we keep the turn.
+                    // Result of spaghetti code, yum
                     if(i==0)
                     {
                         P1turn = !P1turn;
@@ -165,14 +189,15 @@ namespace poopoofard
             // Vertical
             int coin = P1turn ? YELLOW : RED;
             byte[,] tempBoard;
-           
+            // for each column,
             for (int i = 0; i < sizeX; i++)
             {
                 int same = 0;
                 tempBoard = board.Clone() as byte[,];
-                
+                // in each row,
                 for (int j = 0; j < sizeY; j++)
                 {
+                    // If we get the color we need
                     if(board[i,j] == coin)
                     {
                         same++;
@@ -182,6 +207,7 @@ namespace poopoofard
                             return tempBoard;
                         }
                     }
+                    // Different color, we abort
                     else
                     {
                         same = 0;
@@ -189,13 +215,15 @@ namespace poopoofard
                 }
             }
             // Horizontal
+            // for each row,
             for (int i = 0; i < sizeY; i++)
             {
                 int same = 0;
                 tempBoard = board.Clone() as byte[,];
-
+                // in each column
                 for (int j = 0; j < sizeX; j++)
                 {
+                    // If we get the color we need
                     if (board[j,i] == coin)
                     {
                         same++;
@@ -205,6 +233,7 @@ namespace poopoofard
                             return tempBoard;
                         }
                     }
+                    // Different color, we abort
                     else
                     {
                         same = 0;
@@ -213,20 +242,22 @@ namespace poopoofard
             }
 
             // Diagonal
-            // Works, but barely. Currently cant check diagonals lower than the top 2 left corners.
+            // Works, but barely. Currently cant check diagonals lower than the top 2 left corners. sizeX MUST be below or equal to 7
             // Sometimes gets schizophrenic and thinks that 3 coins are 4.
+            // For each column,
             for (int i = -2; i < sizeX + 2; i++)
             {
                 int same = 0;
                 // OVERFLOW idea: when i is less then 0 or above board.count, overflow is how much outside the limit i is.
                 // Then we can use it to offset the height :>
-                // terrible way but my code is alredy shit enough. One shit stain wont get rid of the others.
+                // terrible way but my code is alredy shit enough. Cleaning one shit stain wont get rid of the others
                 int overflow = i < 0 ? Math.Abs(i) : i > sizeX - 1 ? i+1 - sizeX : 0;
                 int column = Math.Clamp(i, 0, sizeX - 1);
                 tempBoard = board.Clone() as byte[,];
-
+                // In each row,
                 for (int j = 0; j < Math.Clamp(sizeX - column, 0, sizeY-overflow); j++)
                 {
+                    // We move down right
                     if (board[j+column,j+overflow] == coin)
                     {
                         same++;
@@ -236,6 +267,7 @@ namespace poopoofard
                             return tempBoard;
                         }
                     }
+                    // Different color, we abort
                     else
                     {
                         same = 0;
@@ -245,8 +277,10 @@ namespace poopoofard
                 // this fella's schizophrenic.
                 // Don't mind him, he's just also a tiny bit autistic, please be patient
                 same = 0;
+                // In each row,
                 for (int j = 0; j < column-overflow; j++)
                 {
+                    // We move down left.
                     if (board[column - j,j + overflow] == coin)
                     {
                         same++;
@@ -256,6 +290,7 @@ namespace poopoofard
                             return tempBoard;
                         }
                     }
+                    // Different color, we abort
                     else
                     {
                         same = 0;
@@ -267,10 +302,14 @@ namespace poopoofard
 
             return new byte[0,0];
         }
-
+        // Shows the winner. 
+        // "Thank you, Captain obvious!"
+        // MUST RUN IN A SEPARATE THREAD!!!
+        // or ur stuck haha
         static void ShowWinner(byte[,] tempBoard)
         {
             bool flipflop = false;
+            // Flip flops the flippy flappy boards between floppy flippy colors.
             while(!playing)
             {
                 Refresh(flipflop? board : tempBoard);
@@ -279,17 +318,22 @@ namespace poopoofard
                 flipflop = !flipflop;
             }
         }
+        // Main. It's the main function. Do I even need to explain this?
         static void Main(string[] args)
         {
+            // Trap the player into eternal doom.
             while (true)
             {
                 Init();
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
                 playing = true;
                 byte[,] tempBoard;
+                // Main game loop: we loop the loop until we cant loop it anymore because the loop said that the player won, while in the loop
                 while ((tempBoard = IsWinner()).GetLength(0) == 0)
                 {
                     Round();
+                    // Hacky solution to the full board problem
+                    // Works, so idgaf
                     counter++;
                     if(counter >= numCells)
                     {
@@ -304,6 +348,8 @@ namespace poopoofard
                 int x = Console.WindowWidth;
                 int y = Console.WindowHeight;
                 playing = false;
+                // flashbang the player
+                // increase the speed if u wanna breakdance on the floor involuntarily
                 for (int i = 0; i < 4; i++)
                 {
 
@@ -324,16 +370,23 @@ namespace poopoofard
                 
                 Thread.Sleep(1000);
 
+                // where syntax go?
+                // (we clear the input buffer)
                 while (Console.KeyAvailable)
                     Console.ReadKey(false);
-                Console.Clear();
-                Console.Write("\x1b[3J");
 
+                Utils.FullClear();
+
+                // We flash the winner.
+                // Not in that way!
                 Thread t = new Thread(() => ShowWinner(tempBoard));
                 t.Start();
 
                 if(Console.ReadKey().Key == ConsoleKey.Q)
                 {
+                    // WONTFIX:
+                    // Not an issue in Linux.
+                    // Windows issue, skill issue + ratio + not open source + no stability + no money + bozo
                     t.Abort();
                     break;
                 }
